@@ -6,13 +6,16 @@ export async function GET(request: NextRequest) {
     const imageName = 'Basename Frame.png';
     const imageUrl = `${baseUrl}/${imageName}`;
 
-    const frameMetadata = {
-      version: 'vNext',
-      image: imageUrl,
-      buttons: [{ label: 'Click me!' }],
+    const frameData = {
+      frame: {
+        version: 'vNext',
+        image: imageUrl,
+        buttons: [{ label: 'Click me!' }]
+      }
     };
 
-    return NextResponse.json({ frame: frameMetadata });
+    console.log('Returning frame data:', frameData);
+    return NextResponse.json(frameData);
   } catch (error) {
     console.error('Error in GET request:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

@@ -1,25 +1,40 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { headers } from 'next/headers';
 
-export async function GET(request: NextRequest) {
+async function getFrame() {
   try {
-    const baseUrl = request.nextUrl.origin;
-    const imageName = 'Basename Frame.png';
-    const imageUrl = `${baseUrl}/${imageName}`;
-
-    const frameData = {
-      frame: {
-        version: 'vNext',
-        image: imageUrl,
-        buttons: [{ label: 'Click me!' }]
-      }
-    };
-
-    console.log('Returning frame data:', frameData);
-    return NextResponse.json(frameData);
+    const host = headers().get('host');
+    const protocol = process?.env.NODE_ENV === 'development' ? 'http' : 'https';
+    const url = `${protocol}://${host}/api/frame`;
+    console.log('Fetching frame from:', url);
+    
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    const data = await res.json();
+    console.log('Fetched frame data:', data);
+    return data;
   } catch (error) {
-    console.error('Error in GET request:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error('Error fetching frame:', error);
+    return { frame: { image: '/fallback-image.png', buttons: [{ label: 'Error' }] } };
   }
 }
 
-export const dynamic = 'force-dynamic';
+export default async function Home() {
+  const { frame } = await getFrame();
+
+  return (
+    <html>
+      <head>
+        <title>Basename Frame</title>
+        <meta property="fc:frame" content="vNext" />
+        <meta property="fc:frame:image" content={frame.image} />
+        <meta property="fc:frame:button:1" content={frame.buttons[0].label} />
+      </head>
+      <body>
+        <h1>Welcome to Basename Frame</h1>
+        <img src={frame.image} alt="Frame Image" />
+      </body>
+    </html>
+  );
+
