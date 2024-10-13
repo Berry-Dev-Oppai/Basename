@@ -3,17 +3,35 @@ import { headers } from 'next/headers';
 async function getFrameData() {
   try {
     const host = headers().get('host');
-    const protocol = process?.env.NODE_ENV === 'development' ? 'http' : 'https';
-    const baseUrl = `${protocol}://${host}`;
-    const apiUrl = `${baseUrl}/api/frame`;
-
-    const res = await fetch(apiUrl, { cache: 'no-store' });
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
+    if (!host) {
+      throw new Error('Host header is missing');
     }
-    return await res.json();
+
+    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+    const baseUrl = `${protocol}://${host}`;
+    const imageName = 'Basename Frame.png';
+    const imageUrl = `${baseUrl}/${imageName}`;
+
+    console.log('Generated image URL:', imageUrl);
+
+    // Attempt to fetch the image to verify its existence
+    const imageResponse = await fetch(imageUrl, { method: 'HEAD' });
+    if (!imageResponse.ok) {
+      throw new Error(`Image not found: ${imageUrl}`);
+    }
+
+    const frameData = {
+      frame: {
+        version: 'vNext',
+        image: imageUrl,
+        buttons: [{ label: 'Click me!' }]
+      }
+    };
+
+    console.log('Frame data generated:', JSON.stringify(frameData));
+    return frameData;
   } catch (error) {
-    console.error('Error fetching frame data:', error);
+    console.error('Error in getFrameData:', error instanceof Error ? error.message : error);
     return null;
   }
 }
@@ -22,7 +40,18 @@ export default async function Home() {
   const frameData = await getFrameData();
 
   if (!frameData) {
-    return <div>Error loading frame data</div>;
+    console.error('Frame data is null');
+    return (
+      <html>
+        <head>
+          <title>Error - Basename Frame</title>
+        </head>
+        <body>
+          <h1>Error loading frame data</h1>
+          <p>Please check the server logs for more information.</p>
+        </body>
+      </html>
+    );
   }
 
   return (
@@ -30,12 +59,15 @@ export default async function Home() {
       <head>
         <title>Basename Frame</title>
         <meta property="fc:frame" content="vNext" />
-        <meta property="fc:frame:image" content={frameData.image} />
-        <meta property="fc:frame:button:1" content={frameData.buttons?.[0]?.label || 'Click me!'} />
+        <meta property="fc:frame:image" content={frameData.frame.image} />
+        <meta property="fc:frame:button:1" content={frameData.frame.buttons[0].label} />
       </head>
       <body>
         <h1>Welcome to Basename Frame</h1>
-        {frameData.image && <img src={frameData.image} alt="Frame Image" />}
+        <img src={frameData.frame.image} alt="Frame Image" onError={(e) => {
+          console.error('Image failed to load:', e);
+          e.currentTarget.style.display = 'none';
+        }} />
         <p>Frame data: {JSON.stringify(frameData)}</p>
       </body>
     </html>
