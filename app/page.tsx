@@ -15,7 +15,7 @@ export default async function Home() {
       </head>
       <body>
         <h1>Basename Frame</h1>
-        {frameData && (
+        {frameData && frameData.frame && frameData.frame.image && (
           <ClientImage src={frameData.frame.image} alt="Basename Frame" />
         )}
         <p>Frame data: {JSON.stringify(frameData)}</p>
