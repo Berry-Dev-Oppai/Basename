@@ -8,7 +8,6 @@ function getFrameContent(username = '') {
     buttons: [
       {
         label: username ? "Search Again" : "Search Basename",
-        action: "post"
       }
     ],
     image: {
