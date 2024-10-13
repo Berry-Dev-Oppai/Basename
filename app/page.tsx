@@ -4,6 +4,7 @@ async function getFrame() {
   const host = headers().get('host');
   const protocal = process?.env.NODE_ENV === 'development' ? 'http' : 'https';
   const res = await fetch(`${protocal}://${host}/api/frame`, { cache: 'no-store' });
+  if (!res.ok) {
     throw new Error('Failed to fetch frame');
   }
   return res.json();
