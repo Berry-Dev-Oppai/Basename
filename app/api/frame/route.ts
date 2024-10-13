@@ -5,8 +5,17 @@ export async function GET(request: NextRequest) {
     console.log('API Route: Received request');
 
     const baseUrl = request.nextUrl.origin;
+    console.log('Base URL:', baseUrl);
+
     const imageName = 'Basename Frame.png';
     const imageUrl = `${baseUrl}/${imageName}`;
+    console.log('Generated image URL:', imageUrl);
+
+    // Attempt to fetch the image to verify its existence
+    const imageResponse = await fetch(imageUrl, { method: 'HEAD' });
+    if (!imageResponse.ok) {
+      throw new Error(`Image not found: ${imageUrl}`);
+    }
 
     const frameData = {
       frame: {
@@ -25,7 +34,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('API Route: Error in GET request:', error);
-    return new NextResponse(JSON.stringify({ error: 'Internal Server Error' }), {
+    return new NextResponse(JSON.stringify({ error: error.message || 'Internal Server Error' }), {
       status: 500,
       headers: {
         'Content-Type': 'application/json',
