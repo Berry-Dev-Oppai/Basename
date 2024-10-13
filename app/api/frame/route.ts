@@ -66,13 +66,12 @@ export async function POST(req: NextRequest) {
     const bnsProfile = await getBNSProfile(bnsName);
 
     return new NextResponse(
-      `
-      <!DOCTYPE html>
+      `<!DOCTYPE html>
       <html>
         <head>
-          <title>BNS Lookup Frame</title>
+          <title>BNS Profile Found</title>
           <meta property="fc:frame" content="vNext" />
-          <meta property="fc:frame:image" content="https://your-image-url.com/image.png" />
+          <meta property="fc:frame:image" content="${bnsProfile.image || 'https://default-image-url.com/image.png'}" />
           <meta property="fc:frame:button:1" content="Look up BNS"
       `,
       {
