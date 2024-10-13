@@ -37,4 +37,4 @@ export default async function Home() {
       </body>
     </html>
   );
-
+}
