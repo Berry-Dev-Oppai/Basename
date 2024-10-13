@@ -1,42 +1,21 @@
 import { headers } from 'next/headers';
 
-async function getFrame() {
-  try {
-    const host = headers().get('host');
-    const protocol = process?.env.NODE_ENV === 'development' ? 'http' : 'https';
-    const url = `${protocol}://${host}/api/frame`;
-    console.log('Page: Fetching frame from:', url);
-    
-    const res = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'User-Agent': 'Basename-Frame/1.0'
-      },
-      cache: 'no-store'
-    });
-    
-    console.log('Page: Response status:', res.status);
-    console.log('Page: Response headers:', JSON.stringify(Object.fromEntries(res.headers)));
-    
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}, statusText: ${res.statusText}`);
+async function getFrameData() {
+  const baseUrl = process?.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://basename-sooty.vercel.app';
+  const imageName = 'Basename Frame.png';
+  const imageUrl = `${baseUrl}/${imageName}`;
+
+  return {
+    frame: {
+      version: 'vNext',
+      image: imageUrl,
+      buttons: [{ label: 'Click me!' }]
     }
-    
-    const text = await res.text();
-    console.log('Page: Raw response:', text);
-    
-    const data = JSON.parse(text);
-    console.log('Page: Parsed frame data:', JSON.stringify(data));
-    return data;
-  } catch (error) {
-    console.error('Page: Error fetching frame:', error);
-    return { frame: { image: '/fallback-image.png', buttons: [{ label: 'Error' }] } };
-  }
+  };
 }
 
 export default async function Home() {
-  const { frame } = await getFrame();
+  const { frame } = await getFrameData();
 
   return (
     <html>
