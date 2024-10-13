@@ -5,22 +5,32 @@ async function getFrame() {
     const host = headers().get('host');
     const protocol = process?.env.NODE_ENV === 'development' ? 'http' : 'https';
     const url = `${protocol}://${host}/api/frame`;
-    console.log('Fetching frame from:', url);
+    console.log('Page: Fetching frame from:', url);
     
-    const res = await fetch(url, { 
-      cache: 'no-store',
+    const res = await fetch(url, {
+      method: 'GET',
       headers: {
-        'Accept': 'application/json'
-      }
+        'Accept': 'application/json',
+        'User-Agent': 'Basename-Frame/1.0'
+      },
+      cache: 'no-store'
     });
+    
+    console.log('Page: Response status:', res.status);
+    console.log('Page: Response headers:', JSON.stringify(Object.fromEntries(res.headers)));
+    
     if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
+      throw new Error(`HTTP error! status: ${res.status}, statusText: ${res.statusText}`);
     }
-    const data = await res.json();
-    console.log('Fetched frame data:', data);
+    
+    const text = await res.text();
+    console.log('Page: Raw response:', text);
+    
+    const data = JSON.parse(text);
+    console.log('Page: Parsed frame data:', JSON.stringify(data));
     return data;
   } catch (error) {
-    console.error('Error fetching frame:', error);
+    console.error('Page: Error fetching frame:', error);
     return { frame: { image: '/fallback-image.png', buttons: [{ label: 'Error' }] } };
   }
 }
@@ -44,3 +54,6 @@ export default async function Home() {
     </html>
   );
 }
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
