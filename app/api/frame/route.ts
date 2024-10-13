@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const baseUrl = request.nextUrl.origin;
     console.log('Base URL:', baseUrl);
 
-    const imageName = 'Basename Frame.png';
+    const imageName = 'frame-image.png';
     const imageUrl = `${baseUrl}/${imageName}`;
     console.log('Generated image URL:', imageUrl);
 
@@ -17,6 +17,12 @@ export async function GET(request: NextRequest) {
     const publicDir = path.join(process.cwd(), 'public');
     const imagePath = path.join(publicDir, imageName);
     
+    console.log('Current working directory:', process.cwd());
+    console.log('Public directory path:', publicDir);
+    console.log('Image path:', imagePath);
+    console.log('Public directory exists:', fs.existsSync(publicDir));
+    console.log('Public directory contents:', fs.readdirSync(publicDir));
+
     if (!fs.existsSync(imagePath)) {
       throw new Error(`Image file not found in public directory: ${imagePath}`);
     }
