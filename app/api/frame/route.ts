@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import fs from 'fs';
+import path from 'path';
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,10 +13,12 @@ export async function GET(request: NextRequest) {
     const imageUrl = `${baseUrl}/${imageName}`;
     console.log('Generated image URL:', imageUrl);
 
-    // Attempt to fetch the image to verify its existence
-    const imageResponse = await fetch(imageUrl, { method: 'HEAD' });
-    if (!imageResponse.ok) {
-      throw new Error(`Image not found: ${imageUrl}`);
+    // Check if the image file exists in the public directory
+    const publicDir = path.join(process.cwd(), 'public');
+    const imagePath = path.join(publicDir, imageName);
+    
+    if (!fs.existsSync(imagePath)) {
+      throw new Error(`Image file not found in public directory: ${imagePath}`);
     }
 
     const frameData = {
@@ -33,7 +37,7 @@ export async function GET(request: NextRequest) {
       }
     });
   } catch (error: unknown) {
-    console.error('API Route: Error in GET request:', error);
+    console.error('API Route: Error in GET request:', error instanceof Error ? error.message : 'Unknown error occurred');
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return new NextResponse(JSON.stringify({ error: errorMessage }), {
       status: 500,
