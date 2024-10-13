@@ -1,7 +1,15 @@
 import { headers } from 'next/headers';
 import ClientImage from './ClientImage';
 
-async function getFrameData(): Promise<{ frame: { image: string } } | null> {
+interface FrameData {
+  frame: {
+    version: string;
+    image: string;
+    buttons: Array<{ label: string }>;
+  }
+}
+
+async function getFrameData(): Promise<FrameData | null> {
   try {
     const host = headers().get('host');
     if (!host) {
@@ -9,9 +17,9 @@ async function getFrameData(): Promise<{ frame: { image: string } } | null> {
     }
 
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
-    const baseUrl = protocol + '://' + host;
+    const baseUrl = `${protocol}://${host}`;
     const imageName = 'frame-image.png';
-    const imageUrl = baseUrl + '/' + imageName;
+    const imageUrl = `${baseUrl}/${imageName}`;
 
     return {
       frame: {
@@ -30,15 +38,15 @@ export default async function Home() {
   const frameData = await getFrameData();
 
   return (
-    <html>
+    <html lang="en">
       <head>
         <title>Basename Frame</title>
       </head>
       <body>
         <h1>Basename Frame</h1>
-        {frameData && frameData.frame && frameData.frame.image ? (
+        {frameData && frameData.frame.image && (
           <ClientImage src={frameData.frame.image} alt="Basename Frame" />
-        ) : null}
+        )}
         <p>Frame data: {JSON.stringify(frameData)}</p>
       </body>
     </html>
