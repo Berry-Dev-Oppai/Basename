@@ -1,17 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getFrameHtmlResponse } from '@coinbase/onchainkit/frame';
+import type { FrameMetadataType } from '@coinbase/onchainkit/frame';
 
 const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
 
-function getFrameContent(username = '') {
+function getFrameContent(username = ''): FrameMetadataType {
   return {
     buttons: [
       {
         label: username ? "Search Again" : "Search Basename",
+        action: 'post'
       }
     ],
     image: {
       src: `${NEXT_PUBLIC_URL}/frame-image.png`,
+      aspectRatio: '1.91:1'
     },
     postUrl: `${NEXT_PUBLIC_URL}/api/frame`,
     input: {
