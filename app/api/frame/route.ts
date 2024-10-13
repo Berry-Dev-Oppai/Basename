@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
+    console.log('API Route: Received request');
+
     const baseUrl = request.nextUrl.origin;
     const imageName = 'Basename Frame.png';
     const imageUrl = `${baseUrl}/${imageName}`;
