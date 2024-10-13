@@ -7,7 +7,12 @@ async function getFrame() {
     const url = `${protocol}://${host}/api/frame`;
     console.log('Fetching frame from:', url);
     
-    const res = await fetch(url, { cache: 'no-store' });
+    const res = await fetch(url, { 
+      cache: 'no-store',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
