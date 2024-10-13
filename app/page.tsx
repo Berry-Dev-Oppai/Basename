@@ -1,4 +1,6 @@
 import { headers } from 'next/headers';
+import fs from 'fs';
+import path from 'path';
 
 async function getFrameData() {
   try {
@@ -9,15 +11,23 @@ async function getFrameData() {
 
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
     const baseUrl = `${protocol}://${host}`;
-    const imageName = 'Basename Frame.png';
+    const imageName = 'frame-image.png';
     const imageUrl = `${baseUrl}/${imageName}`;
 
     console.log('Generated image URL:', imageUrl);
 
-    // Attempt to fetch the image to verify its existence
-    const imageResponse = await fetch(imageUrl, { method: 'HEAD' });
-    if (!imageResponse.ok) {
-      throw new Error(`Image not found: ${imageUrl}`);
+    // Check if the image file exists in the public directory
+    const publicDir = path.join(process.cwd(), 'public');
+    const imagePath = path.join(publicDir, imageName);
+    
+    console.log('Current working directory:', process.cwd());
+    console.log('Public directory path:', publicDir);
+    console.log('Image path:', imagePath);
+    console.log('Public directory exists:', fs.existsSync(publicDir));
+    console.log('Public directory contents:', fs.readdirSync(publicDir));
+
+    if (!fs.existsSync(imagePath)) {
+      throw new Error(`Image file not found in public directory: ${imagePath}`);
     }
 
     const frameData = {
