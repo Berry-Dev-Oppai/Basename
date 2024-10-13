@@ -32,9 +32,10 @@ export async function GET(request: NextRequest) {
         'Content-Type': 'application/json',
       }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('API Route: Error in GET request:', error);
-    return new NextResponse(JSON.stringify({ error: error.message || 'Internal Server Error' }), {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    return new NextResponse(JSON.stringify({ error: errorMessage }), {
       status: 500,
       headers: {
         'Content-Type': 'application/json',
