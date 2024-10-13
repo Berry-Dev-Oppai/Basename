@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { NeynarAPIClient, User } from "@neynar/nodejs-sdk";
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import { NeynarAPIClient } from "@neynar/nodejs-sdk";
 import axios from 'axios';
 
 const neynarClient = new NeynarAPIClient(process.env.NEYNAR_API_KEY || '');
@@ -12,7 +13,7 @@ interface BNSProfile {
 
 async function getEthAddressForUser(username: string): Promise<string> {
   const userResponse = await neynarClient.lookupUserByUsername(username);
-  const user = userResponse.result.user as User & { ethereum_address?: string };
+  const user = userResponse.result.user as { ethereum_address?: string };
   if (!user.ethereum_address) {
     throw new Error(`Ethereum address not found for user: ${username}`);
   }
@@ -78,20 +79,31 @@ export async function POST(req: NextRequest) {
         headers: { 'Content-Type': 'text/html' },
       }
     );
-  } catch (error) {
+  } catch (error: unknown) {
+    // Disable ESLint for the next line
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    console.error('Error:', errorMessage);
     return new NextResponse(
-      `
-      <!DOCTYPE html>
+      `<!DOCTYPE html>
       <html>
         <head>
-          <title>BNS Lookup Frame</title>
+          <title>Error</title>
           <meta property="fc:frame" content="vNext" />
-          <meta property="fc:frame:image" content="https://your-image-url.com/image.png" />
-          <meta property="fc:frame:button:1" content="Look up BNS"
-      `,
+          <meta property="fc:frame:image" content="https://error-image-url.com/image.png" />
+          <meta property="fc:frame:button:1" content="Try Again" />
+        </head>
+        <body>
+          <h1>Error: ${errorMessage}</h1>
+          <p>Please try again or contact support if the problem persists.</p>
+        </body>
+      </html>`,
       {
+        status: 500,
         headers: { 'Content-Type': 'text/html' },
       }
     );
   }
 }
+
+export const dynamic = 'force-dynamic';
