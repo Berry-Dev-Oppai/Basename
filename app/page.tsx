@@ -1,8 +1,29 @@
 import { headers } from 'next/headers';
 import ClientImage from './ClientImage';
 
-async function getFrameData() {
-  // ... (keep your existing getFrameData function)
+async function getFrameData(): Promise<{ frame: { image: string } } | null> {
+  try {
+    const host = headers().get('host');
+    if (!host) {
+      throw new Error('Host header is missing');
+    }
+
+    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+    const baseUrl = ;
+    const imageName = 'frame-image.png';
+    const imageUrl = ;
+
+    return {
+      frame: {
+        version: 'vNext',
+        image: imageUrl,
+        buttons: [{ label: 'Click me!' }]
+      }
+    };
+  } catch (error) {
+    console.error('Error in getFrameData:', error);
+    return null;
+  }
 }
 
 export default async function Home() {
