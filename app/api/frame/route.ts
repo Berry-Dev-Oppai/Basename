@@ -21,7 +21,7 @@ function getFrameContent() {
   };
 }
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   return new NextResponse(getFrameHtmlResponse(getFrameContent()));
 }
 
@@ -37,4 +37,3 @@ export async function POST(req: NextRequest) {
 }
 
 export const dynamic = 'force-dynamic';
-
