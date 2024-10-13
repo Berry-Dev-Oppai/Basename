@@ -30,8 +30,8 @@ async function getFrameData() {
 
     console.log('Frame data generated:', JSON.stringify(frameData));
     return frameData;
-  } catch (error) {
-    console.error('Error in getFrameData:', error instanceof Error ? error.message : error);
+  } catch (error: unknown) {
+    console.error('Error in getFrameData:', error instanceof Error ? error.message : 'Unknown error occurred');
     return null;
   }
 }
