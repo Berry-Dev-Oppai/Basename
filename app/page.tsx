@@ -34,6 +34,7 @@ export default async function Home() {
       <body>
         <h1>Welcome to Basename Frame</h1>
         <img src={frame.image} alt="Frame Image" />
+        <p>Frame data: {JSON.stringify(frame)}</p>
       </body>
     </html>
   );
