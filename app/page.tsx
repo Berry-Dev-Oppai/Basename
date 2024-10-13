@@ -4,14 +4,13 @@ import ClientImage from './ClientImage';
 async function getFrameData(): Promise<{ frame: { image: string } } | null> {
   try {
     const host = headers().get('host');
-    if (!host) {
       throw new Error('Host header is missing');
     }
 
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
-    const baseUrl = ;
+    const baseUrl = `${protocol}://${host}`;
     const imageName = 'frame-image.png';
-    const imageUrl = ;
+    const imageUrl = `${baseUrl}/${imageName}`;
 
     return {
       frame: {
