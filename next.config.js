@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  // Add any other necessary configurations here
+  images: {
+    domains: ['basename-72jh4yjs5-berry-dev-oppais-projects.vercel.app', 'basename-sooty.vercel.app'],
+  },
 }
 
 module.exports = nextConfig
