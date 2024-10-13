@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@coinbase/onchainkit": "^0.33.6",
-    "@neynar/nodejs-sdk": "latest",
+    "@neynar/nodejs-sdk": "^1.61.0",
     "axios": "latest",
     "next": "^13.0.0 || ^14.0.0",
     "react": "^18.2.0",
