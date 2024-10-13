@@ -14,11 +14,21 @@ export async function GET(request: NextRequest) {
       }
     };
 
-    console.log('Returning frame data:', frameData);
-    return NextResponse.json(frameData);
+    console.log('API Route: Returning frame data:', JSON.stringify(frameData));
+    return new NextResponse(JSON.stringify(frameData), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
   } catch (error) {
-    console.error('Error in GET request:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error('API Route: Error in GET request:', error);
+    return new NextResponse(JSON.stringify({ error: 'Internal Server Error' }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
   }
 }
 
